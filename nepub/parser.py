@@ -1,6 +1,6 @@
 from html.parser import HTMLParser
 import re
-from typing import Dict, List, TypedDict
+from typing import List, TypedDict
 
 
 PARAGRAPH_ID_PATTERN = re.compile(r'L[1-9][0-9]*')
