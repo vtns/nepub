@@ -31,6 +31,7 @@ class NarouEpisodeParser(HTMLParser):
     def handle_endtag(self, tag):
         if self._current_paragraph:
             self.paragraphs.append(self._current_paragraph)
+        self._current_paragraph = ''
 
     def handle_data(self, data):
         # paragraph
@@ -83,6 +84,7 @@ class NarouIndexParser(HTMLParser):
                 'name': self._current_chapter,
                 'episodes': []
             })
+        self._current_chapter = ''
 
     def handle_data(self, data):
         # title
