@@ -1,8 +1,8 @@
-from nepub.parser import NarouParser
+from nepub.parser import NarouEpisodeParser
 
 
 if __name__ == '__main__':
-    parser = NarouParser()
+    parser = NarouEpisodeParser()
     parser.feed('''
     <p class="novel_subtitle">title</p>
     <p id="L1">aaaa</p>

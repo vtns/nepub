@@ -1,4 +1,4 @@
-from nepub.parser import NarouParser
+from nepub.parser import NarouEpisodeParser
 import urllib.request
 
 
@@ -10,7 +10,7 @@ def get(url, headers={}):
 
 if __name__ == '__main__':
     content = get('https://ncode.syosetu.com/n0611em/2/')
-    parser = NarouParser()
+    parser = NarouEpisodeParser()
     parser.feed(content)
     print(parser.title)
     print(parser.paragraphs)

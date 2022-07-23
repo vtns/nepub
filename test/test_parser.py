@@ -1,10 +1,10 @@
 from unittest import TestCase
-from nepub.parser import NarouParser
+from nepub.parser import NarouEpisodeParser
 
 
 class TestNarouParser(TestCase):
     def test_title_and_paragraphs(self):
-        parser = NarouParser()
+        parser = NarouEpisodeParser()
         parser.feed('''
         <p class="novel_subtitle class2">title</p>
         <p id="L1">aaaa</p>
