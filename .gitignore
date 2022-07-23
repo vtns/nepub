@@ -1,3 +1,4 @@
 nepub.egg-info/
 build/
 .vscode/
+*.pyc
