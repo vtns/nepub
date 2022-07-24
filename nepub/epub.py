@@ -1,4 +1,5 @@
-from typing import List
+from typing import List, Tuple
+import zipfile
 from jinja2 import Environment, PackageLoader
 from importlib import resources
 from nepub.type import Chapter, Episode
@@ -40,3 +41,9 @@ def container():
 
 def style():
     return resources.read_text('nepub.files', 'style.css')
+
+
+def compose(file_name: str, files: List[Tuple[str, str]]):
+    with zipfile.ZipFile(file_name, 'w', zipfile.ZIP_DEFLATED) as zf:
+        for file in files:
+            zf.writestr(file[0], file[1])
