@@ -30,7 +30,7 @@ options:
 ## Example
 
 ```sh
-nepub xxxx -o example.epub
+$ nepub xxxx -o example.epub
 ```
 
 ※ xxxx の部分には小説ページの URL の末尾部分 (`https://ncode.syosetu.com/{ここの文字列}/`) に置き換えてください。
