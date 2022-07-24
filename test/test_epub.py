@@ -17,7 +17,7 @@ class TestEpub(TestCase):
     </metadata>
     <manifest>
         <item media-type="application/xhtml+xml" id="nav" href="navigation.xhtml" properties="nav" />
-        <item media-type="text/css" id="style" href="style/style.css" />
+        <item media-type="text/css" id="style" href="style.css" />
         <item media-type="application/xhtml+xml" id="001" href="text/001.xhtml" />
         <item media-type="application/xhtml+xml" id="002" href="text/002.xhtml" />
     </manifest>
@@ -145,7 +145,7 @@ class TestEpub(TestCase):
     <head>
         <meta charset="UTF-8" />
         <title>たいとる</title>
-        <link href="../style/style.css" type="text/css" rel="stylesheet" />
+        <link href="../style.css" type="text/css" rel="stylesheet" />
     </head>
     <body>
         <h1>たいとる</h1>

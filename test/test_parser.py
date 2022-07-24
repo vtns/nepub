@@ -43,11 +43,11 @@ class TestNarouIndexParser(TestCase):
             'name': 'チャプター1',
             'episodes': [
                 {
-                    'id': '/xxxx/1/',
+                    'id': '1',
                     'title': '',
                     'paragraphs': []
                 }, {
-                    'id': '/xxxx/2/',
+                    'id': '2',
                     'title': '',
                     'paragraphs': []
                 }
@@ -56,7 +56,7 @@ class TestNarouIndexParser(TestCase):
             'name': 'チャプター2',
             'episodes': [
                 {
-                    'id': '/xxxx/3/',
+                    'id': '3',
                     'title': '',
                     'paragraphs': []
                 }
