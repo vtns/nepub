@@ -1,1 +1,1 @@
-scrapy
+Jinja2 >= 3.0.0
