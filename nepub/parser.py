@@ -1,6 +1,7 @@
 from html.parser import HTMLParser
 import re
-from typing import List, TypedDict
+from typing import List
+from nepub.type import Chapter
 
 
 PARAGRAPH_ID_PATTERN = re.compile(r'L[1-9][0-9]*')
@@ -42,11 +43,6 @@ class NarouEpisodeParser(HTMLParser):
             self.title += data.strip()
 
 
-class Chapter(TypedDict):
-    name: str
-    episodes: List[str]
-
-
 class NarouIndexParser(HTMLParser):
     def __init__(self):
         super().__init__()
@@ -75,8 +71,13 @@ class NarouIndexParser(HTMLParser):
             if attr[0] == 'class':
                 self._current_classes = attr[1].split()
             # episode
+            # TODO: id を数字部分だけ抽出する
             if 'subtitle' in self._previous_classes and attr[0] == 'href':
-                self.chapters[-1]['episodes'].append(attr[1])
+                self.chapters[-1]['episodes'].append({
+                    'id': attr[1],
+                    'title': '',
+                    'paragraphs': [],
+                })
 
     def handle_endtag(self, tag):
         if self._current_chapter:

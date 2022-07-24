@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<package xmlns="http://www.idpf.org/2007/opf" version="3.0" xml:lang="ja">
+    <metadata xmlns:dc="http://purl.org/dc/elements/1.1/">
+        <dc:title id="title">{{ title }}</dc:title>
+        <dc:creator id="creator01">{{ author }}</dc:creator>
+        <dc:language>ja</dc:language>
+        <meta property="dcterms:modified">{{ created_at }}</meta>
+    </metadata>
+    <manifest>
+        <item media-type="application/xhtml+xml" id="nav" href="navigation.xhtml" properties="nav" />
+        <item media-type="text/css" id="style" href="style/style.css" />
+{%- for episode in episodes %}
+        <item media-type="application/xhtml+xml" id="{{ episode.id }}" href="text/{{ episode.id }}.xhtml" />
+{%- endfor %}
+    </manifest>
+    <spine page-progression-direction="rtl">
+{%- for episode in episodes %}
+        <itemref linear="yes" idref="{{ episode.id }}" />
+{%- endfor %}
+    </spine>
+</package>

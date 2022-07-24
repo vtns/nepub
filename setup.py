@@ -28,5 +28,6 @@ setup(
     license=license,
     install_requires=install_requires,
     packages=find_packages(exclude=('test',)),
+    package_data={'': ['files/*', 'templates/*']},
     entry_points=entry_points
 )
