@@ -6,6 +6,12 @@
 
 * Python 3.7 or later
 
+## Installation
+
+```sh
+pip install git+https://github.com/ttk1/nepub.git
+```
+
 ## Usage
 
 ```sh
