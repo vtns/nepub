@@ -15,6 +15,12 @@ class NarouEpisodeParser(HTMLParser):
         self.paragraphs: List[str] = []
         self._reset()
 
+    def reset(self):
+        super().reset()
+        self._reset()
+        self.title = ''
+        self.paragraphs = []
+
     def _reset(self):
         self._current_tag = ''
         self._current_classes = []
