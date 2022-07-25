@@ -27,7 +27,7 @@ options:
                         output file name
 ```
 
-## Example
+Example:
 
 ```sh
 $ nepub xxxx
