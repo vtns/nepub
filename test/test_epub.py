@@ -1,6 +1,4 @@
 from unittest import TestCase
-from jinja2 import Environment, PackageLoader
-from importlib import resources
 
 from nepub.epub import content, nav, text
 
@@ -37,7 +35,7 @@ class TestEpub(TestCase):
             }
         ]))
 
-    def test_nav_(self):
+    def test_nav(self):
         self.assertEqual('''<?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml" xmlns:epub="http://www.idpf.org/2007/ops" xml:lang="ja">

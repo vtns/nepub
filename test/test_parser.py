@@ -8,12 +8,29 @@ class TestNarouEpisodeParser(TestCase):
         parser.feed('''
         <p class="novel_subtitle class1">タイトル</p>
         <p id="L1">　段落1</p>
-        <p id="L2"></p>
-        <p id="L3">「段落3」</p>
-        <p id="L4">"段落4"</p>
+        <p id="L2"><br></p>
+        <p id="L3"></p>
+        <p id="L4">「段落4」</p>
+        <p id="L5">"段落5"</p>
         ''')
         self.assertEqual('タイトル', parser.title)
-        self.assertEqual(['　段落1', '「段落3」', '&quot;段落4&quot;'],
+        self.assertEqual(['　段落1', '「段落4」', '&quot;段落5&quot;'],
+                         parser.paragraphs)
+
+    def test_narou_episode_parser_ruby(self):
+        parser = NarouEpisodeParser()
+        parser.feed('''
+        <p class="novel_subtitle class1">タイトル</p>
+        <p id="L1">あああ<ruby>段落1<rt>だんらくいち</rt></ruby>あああ</p>
+        <p id="L2">いいい<ruby>段落2<rp>（</rp><rt>だんらくに</rt><rp>）</rp></ruby>いいい</p>
+        <p id="L3">ううう<ruby><rb>段落3<rt>だんらくさん</rt></ruby>ううう</p>
+        <p id="L3">えええ<ruby><rb>段落4<rt>だんらくよん</rt></ruby>えええ</p>
+        ''')
+        self.assertEqual('タイトル', parser.title)
+        self.assertEqual(['あああ<ruby>段落1<rt>だんらくいち</rt></ruby>あああ',
+                          'いいい<ruby>段落2<rt>だんらくに</rt></ruby>いいい',
+                          'ううう<ruby>段落3<rt>だんらくさん</rt></ruby>ううう',
+                          'えええ<ruby>段落4<rt>だんらくよん</rt></ruby>えええ'],
                          parser.paragraphs)
 
 

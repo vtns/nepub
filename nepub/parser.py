@@ -10,49 +10,60 @@ EPISODE_ID_PATTERN = re.compile(r'/[a-z0-9]+/([1-9][0-9]*)/')
 
 
 class NarouEpisodeParser(HTMLParser):
-    def __init__(self):
-        super().__init__()
-        self.title = ''
-        self.paragraphs: List[str] = []
-        self._id_stack: List[str | None] = [None]
-        self._classes_stack: List[List[str] | None] = [None]
-
     def reset(self):
         super().reset()
         self.title = ''
-        self.paragraphs = []
-        self._id_stack = [None]
-        self._classes_stack = [None]
+        self.paragraphs: List[str] = []
+        self._tag_stack: List[str | None] = [None, None]
+        self._id_stack: List[str | None] = [None]
+        self._classes_stack: List[List[str] | None] = [None]
+        self._paragraph_flg = False
         self._current_paragraph = ''
 
     def handle_starttag(self, tag, attrs):
-        # id と classes をスタックに積む
-        id_flg = False
-        class_flg = False
+        # tag, id, classes をスタックに積む
+        self._tag_stack.append(tag)
+        self._id_stack.append(None)
+        self._classes_stack.append(None)
         for attr in attrs:
             if attr[0] == 'id':
-                self._id_stack.append(attr[1])
-                id_flg = True
+                self._id_stack[-1] = attr[1]
             if attr[0] == 'class':
-                self._classes_stack.append(attr[1].split())
-                class_flg = True
-        if not id_flg:
-            self._id_stack.append(None)
-        if not class_flg:
-            self._classes_stack.append(None)
+                self._classes_stack[-1] = attr[1].split()
+        # paragraph_flg
+        if self._id_stack[-1] is not None and PARAGRAPH_ID_PATTERN.fullmatch(self._id_stack[-1]):
+            self._paragraph_flg = True
+        # ruby, rt
+        # rb タグは省略する
+        if self._paragraph_flg:
+            if tag == 'ruby':
+                self._current_paragraph += '<ruby>'
+            elif tag == 'rt':
+                self._current_paragraph += '<rt>'
 
     def handle_endtag(self, tag):
-        # 空の段落は読み飛ばす
-        if tag == 'p' and self._current_paragraph:
-            self.paragraphs.append(self._current_paragraph)
-            self._current_paragraph = ''
-        # id と classes をスタックからおろす
+        # ruby, rt, p
+        # rb タグは省略する
+        if self._paragraph_flg:
+            if tag == 'ruby':
+                self._current_paragraph += '</ruby>'
+            elif tag == 'rt':
+                self._current_paragraph += '</rt>'
+            elif tag == 'p' and self._current_paragraph:
+                # 空の段落は読み飛ばす
+                self.paragraphs.append(self._current_paragraph)
+                self._current_paragraph = ''
+        # paragraph_flg
+        if self._id_stack[-1] is not None and PARAGRAPH_ID_PATTERN.fullmatch(self._id_stack[-1]):
+            self._paragraph_flg = False
+        # tag, id, classes をスタックからおろす
+        self._tag_stack.pop()
         self._id_stack.pop()
         self._classes_stack.pop()
 
     def handle_data(self, data):
-        # paragraph
-        if self._id_stack[-1] is not None and PARAGRAPH_ID_PATTERN.fullmatch(self._id_stack[-1]):
+        # ruby, rt, p
+        if self._paragraph_flg and self._tag_stack[-1] in ['ruby', 'rb', 'rt', 'p']:
             self._current_paragraph += html.escape(data.rstrip())
         # title
         if self._classes_stack[-1] is not None and 'novel_subtitle' in self._classes_stack[-1]:
@@ -60,8 +71,8 @@ class NarouEpisodeParser(HTMLParser):
 
 
 class NarouIndexParser(HTMLParser):
-    def __init__(self):
-        super().__init__()
+    def reset(self):
+        super().reset()
         self.title = ''
         self.author = ''
         self.chapters: List[Chapter] = [{
@@ -73,13 +84,10 @@ class NarouIndexParser(HTMLParser):
 
     def handle_starttag(self, tag, attrs):
         # classes をスタックに積む
-        class_flg = False
+        self._classes_stack.append(None)
         for attr in attrs:
             if attr[0] == 'class':
-                self._classes_stack.append(attr[1].split())
-                class_flg = True
-        if not class_flg:
-            self._classes_stack.append(None)
+                self._classes_stack[-1] = attr[1].split()
         # 直前のタグの class に subtitle があれば href から episode_id を取り出す
         if self._classes_stack[-2] is not None and 'subtitle' in self._classes_stack[-2]:
             for attr in attrs:

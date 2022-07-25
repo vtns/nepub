@@ -6,7 +6,9 @@ from nepub.type import Chapter, Episode
 
 env = Environment(
     loader=PackageLoader('nepub'),
-    autoescape=True
+    # データ取得の際にエスケープ加工するので
+    # ここではエスケープしない
+    autoescape=False
 )
 template_content = env.get_template('content.opf')
 template_navigation = env.get_template('navigation.xhtml')
