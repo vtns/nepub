@@ -6,7 +6,7 @@ from nepub.type import Chapter
 
 
 PARAGRAPH_ID_PATTERN = re.compile(r'L[1-9][0-9]*')
-EPISODE_ID_PATTERN = re.compile(r'/[^/]+/([^/]+)/')
+EPISODE_ID_PATTERN = re.compile(r'/[a-z0-9]+/([1-9][0-9]*)/')
 
 
 class NarouEpisodeParser(HTMLParser):
@@ -83,7 +83,7 @@ class NarouIndexParser(HTMLParser):
             if 'subtitle' in self._previous_classes and attr[0] == 'href':
                 m = EPISODE_ID_PATTERN.fullmatch(attr[1])
                 if not m:
-                    raise Exception('episode_id が不正です')
+                    raise Exception(f'episode_id が認識できませんでした: {attr[1]}')
                 self.chapters[-1]['episodes'].append({
                     'id': m.group(1),
                     'title': '',
