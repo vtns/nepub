@@ -32,7 +32,7 @@ options:
 ```sh
 $ nepub xxxx
 noval_id: xxxx, output: default.epub
-3 episodes found
+3 episodes found.
 Start downloading...
 Downloading (1/3): https://ncode.syosetu.com/xxxx/1/
 Downloading (2/3): https://ncode.syosetu.com/xxxx/2/
