@@ -10,9 +10,11 @@ class TestNarouEpisodeParser(TestCase):
         <p id="L1">　段落1</p>
         <p id="L2"></p>
         <p id="L3">「段落3」</p>
+        <p id="L4">"段落4"</p>
         ''')
         self.assertEqual('タイトル', parser.title)
-        self.assertEqual(['　段落1', '「段落3」'], parser.paragraphs)
+        self.assertEqual(['　段落1', '「段落3」', '&quot;段落4&quot;'],
+                         parser.paragraphs)
 
 
 class TestNarouIndexParser(TestCase):

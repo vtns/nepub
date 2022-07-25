@@ -1,3 +1,4 @@
+import html
 from html.parser import HTMLParser
 import re
 from typing import List
@@ -45,10 +46,10 @@ class NarouEpisodeParser(HTMLParser):
     def handle_data(self, data):
         # paragraph
         if self._current_id is not None and PARAGRAPH_ID_PATTERN.fullmatch(self._current_id):
-            self._current_paragraph += data.rstrip()
+            self._current_paragraph += html.escape(data.rstrip())
         # title
         if 'novel_subtitle' in self._current_classes:
-            self.title += data.rstrip()
+            self.title += html.escape(data.rstrip())
 
 
 class NarouIndexParser(HTMLParser):
@@ -100,10 +101,10 @@ class NarouIndexParser(HTMLParser):
     def handle_data(self, data):
         # title
         if 'novel_title' in self._current_classes:
-            self.title += data.rstrip()
+            self.title += html.escape(data.rstrip())
         # author
         if 'novel_writername' in self._previous_classes:
-            self.author += data.rstrip()
+            self.author += html.escape(data.rstrip())
         # chapter
         if 'chapter_title' in self._current_classes:
-            self._current_chapter += data.rstrip()
+            self._current_chapter += html.escape(data.rstrip())
