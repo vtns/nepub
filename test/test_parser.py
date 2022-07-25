@@ -7,11 +7,12 @@ class TestNarouEpisodeParser(TestCase):
         parser = NarouEpisodeParser()
         parser.feed('''
         <p class="novel_subtitle class1">タイトル</p>
-        <p id="L1">段落1</p>
-        <p id="L2">段落2</p>
+        <p id="L1">　段落1</p>
+        <p id="L2"></p>
+        <p id="L3">「段落3」</p>
         ''')
         self.assertEqual('タイトル', parser.title)
-        self.assertEqual(['段落1', '段落2'], parser.paragraphs)
+        self.assertEqual(['　段落1', '「段落3」'], parser.paragraphs)
 
 
 class TestNarouIndexParser(TestCase):

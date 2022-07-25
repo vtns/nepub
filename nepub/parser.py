@@ -37,6 +37,7 @@ class NarouEpisodeParser(HTMLParser):
                 self._current_classes = attr[1].split()
 
     def handle_endtag(self, tag):
+        # 空の段落は読み飛ばす
         if self._current_paragraph:
             self.paragraphs.append(self._current_paragraph)
         self._current_paragraph = ''
@@ -44,10 +45,10 @@ class NarouEpisodeParser(HTMLParser):
     def handle_data(self, data):
         # paragraph
         if self._current_id is not None and PARAGRAPH_ID_PATTERN.fullmatch(self._current_id):
-            self._current_paragraph += data.strip()
+            self._current_paragraph += data.rstrip()
         # title
         if 'novel_subtitle' in self._current_classes:
-            self.title += data.strip()
+            self.title += data.rstrip()
 
 
 class NarouIndexParser(HTMLParser):
@@ -99,10 +100,10 @@ class NarouIndexParser(HTMLParser):
     def handle_data(self, data):
         # title
         if 'novel_title' in self._current_classes:
-            self.title += data.strip()
+            self.title += data.rstrip()
         # author
         if 'novel_writername' in self._previous_classes:
-            self.author += data.strip()
+            self.author += data.rstrip()
         # chapter
         if 'chapter_title' in self._current_classes:
-            self._current_chapter += data.strip()
+            self._current_chapter += data.rstrip()

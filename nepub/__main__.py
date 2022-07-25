@@ -18,6 +18,8 @@ def main():
 
 
 def convert_narou_to_epub(novel_id: str, output: str):
+    print(f'noval_id: {novel_id}, output: {output}')
+
     # index
     index_parser = NarouIndexParser()
     index_parser.feed(get(f'https://ncode.syosetu.com/{novel_id}/'))
@@ -31,15 +33,23 @@ def convert_narou_to_epub(novel_id: str, output: str):
     episode_parser = NarouEpisodeParser()
     for chapter in chapters:
         for episode in chapter['episodes']:
-            print(f'downloading: https://ncode.syosetu.com/{novel_id}/{episode["id"]}/')
-            episode_parser.feed(
-                get(f'https://ncode.syosetu.com/{novel_id}/{episode["id"]}/'))
-            episode['title'] = episode_parser.title
-            episode['paragraphs'] = episode_parser.paragraphs
-            episode_parser.reset()
             episodes.append(episode)
-            # 負荷かけないようにちょっと待つ
-            time.sleep(1)
+
+    print(f'{len(episodes)} episodes found.')
+    print('Start downloading...')
+
+    for i, episode in enumerate(episodes):
+        print(
+            f'Downloading ({i + 1}/{len(episodes)}): https://ncode.syosetu.com/{novel_id}/{episode["id"]}/')
+        episode_parser.feed(
+            get(f'https://ncode.syosetu.com/{novel_id}/{episode["id"]}/'))
+        episode['title'] = episode_parser.title
+        episode['paragraphs'] = episode_parser.paragraphs
+        episode_parser.reset()
+        # 負荷かけないようにちょっと待つ
+        time.sleep(1)
+
+    print('Download is complete!')
 
     # files
     files: List[Tuple[str, str]] = []
@@ -53,6 +63,8 @@ def convert_narou_to_epub(novel_id: str, output: str):
         files.append((f'src/text/{episode["id"]}.xhtml',
                       text(episode['title'], episode['paragraphs'])))
     compose(output, files)
+
+    print(f'Created {output}.')
 
 
 if __name__ == '__main__':
