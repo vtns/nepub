@@ -38,7 +38,7 @@ Downloading (1/3): https://ncode.syosetu.com/xxxx/1/
 Downloading (2/3): https://ncode.syosetu.com/xxxx/2/
 Downloading (3/3): https://ncode.syosetu.com/xxxx/3/
 Download is complete!
-Created default.epub
+Created default.epub.
 ```
 
 ※ xxxx の部分には小説ページの URL の末尾部分 (`https://ncode.syosetu.com/{ここの文字列}/`) に置き換えてください。
