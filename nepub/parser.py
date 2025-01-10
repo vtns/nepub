@@ -123,8 +123,8 @@ class NarouIndexParser(HTMLParser):
                     self.next_page = attr[1]
         # episode_id
         if (
-            self._classes_stack[-2] is not None
-            and "p-eplist__sublist" in self._classes_stack[-2]
+            self._classes_stack[-1] is not None
+            and "p-eplist__subtitle" in self._classes_stack[-1]
         ):
             for attr in attrs:
                 if attr[0] == "href":
