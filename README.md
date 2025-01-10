@@ -25,21 +25,21 @@ options:
   -h, --help            show this help message and exit
   -i, --illustration    include illustrations
   -o <file>, --output <file>
-                        output file name
+                        output file name; if not specified, ${novel_id}.epub is used
 ```
 
 Example:
 
 ```sh
 $ nepub xxxx
-noval_id: xxxx, output: default.epub
+noval_id: xxxx, illustration: False, output: xxxx.epub
 3 episodes found.
 Start downloading...
 Downloading (1/3): https://ncode.syosetu.com/xxxx/1/
 Downloading (2/3): https://ncode.syosetu.com/xxxx/2/
 Downloading (3/3): https://ncode.syosetu.com/xxxx/3/
 Download is complete!
-Created default.epub.
+Created xxxx.epub.
 ```
 
 ※ xxxx の部分には小説ページの URL の末尾部分 (`https://ncode.syosetu.com/{ここの文字列}/`) に置き換えてください。

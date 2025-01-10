@@ -18,12 +18,15 @@ def main():
         "-o",
         "--output",
         metavar="<file>",
-        help="output file name",
+        help="output file name; if not specified, ${novel_id}.epub is used",
         type=str,
-        default="default.epub",
     )
     args = parser.parse_args()
-    convert_narou_to_epub(args.novel_id, args.illustration, args.output)
+    if args.output:
+        output = args.output
+    else:
+        output = f"{args.novel_id}.epub"
+    convert_narou_to_epub(args.novel_id, args.illustration, output)
 
 
 def convert_narou_to_epub(novel_id: str, illustration: bool, output: str):
@@ -73,13 +76,24 @@ def convert_narou_to_epub(novel_id: str, illustration: bool, output: str):
 
     print("Download is complete!")
 
+    # deduplicate images
+    deduplicated_images = []
+    image_md5s = set()
+    for image in images:
+        if image["id"] not in image_md5s:
+            deduplicated_images.append(image)
+            image_md5s.add(image["id"])
+
     # files
     files: List[Tuple[str, str | bytes]] = []
     files.append(("mimetype", "application/epub+zip"))
     files.append(("META-INF/container.xml", container()))
     files.append(("src/style.css", style()))
     files.append(
-        ("src/content.opf", content(title, author, created_at, episodes, images))
+        (
+            "src/content.opf",
+            content(title, author, created_at, episodes, deduplicated_images),
+        )
     )
     files.append(("src/navigation.xhtml", nav(chapters)))
     for episode in episodes:
@@ -89,7 +103,7 @@ def convert_narou_to_epub(novel_id: str, illustration: bool, output: str):
                 text(episode["title"], episode["paragraphs"]),
             )
         )
-    for image in images:
+    for image in deduplicated_images:
         files.append((f'src/image/{image["name"]}', image["data"]))
     compose(output, files)
 
