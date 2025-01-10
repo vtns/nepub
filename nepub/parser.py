@@ -2,7 +2,8 @@ import html
 from html.parser import HTMLParser
 import re
 from typing import List
-from nepub.type import Chapter
+from nepub.http import get_image
+from nepub.type import Chapter, Image
 
 
 PARAGRAPH_ID_PATTERN = re.compile(r"L[1-9][0-9]*")
@@ -10,10 +11,15 @@ EPISODE_ID_PATTERN = re.compile(r"/[a-z0-9]+/([1-9][0-9]*)/")
 
 
 class NarouEpisodeParser(HTMLParser):
+    def __init__(self, include_images=False):
+        super().__init__()
+        self.include_images = include_images
+
     def reset(self):
         super().reset()
         self.title = ""
         self.paragraphs: List[str] = []
+        self.images: List[Image] = []
         self._tag_stack: List[str | None] = [None, None]
         self._id_stack: List[str | None] = [None]
         self._classes_stack: List[List[str] | None] = [None]
@@ -35,13 +41,27 @@ class NarouEpisodeParser(HTMLParser):
             self._id_stack[-1]
         ):
             self._paragraph_flg = True
-        # ruby, rt
-        # rb タグは省略する
+        # ruby, rt (rb タグは省略する) の処理
+        # include_images が設定されている場合は img も処理する
         if self._paragraph_flg:
             if tag == "ruby":
                 self._current_paragraph += "<ruby>"
             elif tag == "rt":
                 self._current_paragraph += "<rt>"
+            elif self.include_images and tag == "img":
+                img_alt = ""
+                img_src = ""
+                for attr in attrs:
+                    if attr[0] == "alt":
+                        img_alt = attr[1]
+                    elif attr[0] == "src":
+                        img_src = attr[1]
+                if img_src:
+                    image = get_image(f"https:{img_src}")
+                    self._current_paragraph += (
+                        f'<img alt="{img_alt}" src="../image/{image["name"]}"/>'
+                    )
+                    self.images.append(image)
 
     def handle_endtag(self, tag):
         # ruby, rt, p

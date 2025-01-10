@@ -1,4 +1,5 @@
 from unittest import TestCase
+from unittest.mock import patch
 from nepub.parser import NarouEpisodeParser, NarouIndexParser
 
 
@@ -41,6 +42,25 @@ class TestNarouEpisodeParser(TestCase):
             ],
             parser.paragraphs,
         )
+
+    @patch("nepub.parser.get_image")
+    def test_narou_episode_parser_image(self, get_image):
+        get_image.return_value = {
+            "type": "image/jpeg",
+            "id": "test_id",
+            "name": "test_name",
+            "data": b"test_data",
+        }
+        parser = NarouEpisodeParser(include_images=True)
+        parser.feed(
+            """
+            <p id="L1"><a href="//example.com/href" target="_blank"><img src="//example.com/src" alt="test_alt" border="0" /></a></p>
+            """
+        )
+        self.assertEqual(
+            ['<img alt="test_alt" src="../image/test_name"/>'], parser.paragraphs
+        )
+        self.assertEqual("https://example.com/src", get_image.call_args[0][0])
 
 
 class TestNarouIndexParser(TestCase):

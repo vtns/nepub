@@ -2,18 +2,18 @@ import argparse
 import datetime
 import time
 from typing import List, Tuple
-from importlib.metadata import version
 from nepub.epub import compose, container, content, nav, style, text
 from nepub.http import get
 from nepub.parser import NarouEpisodeParser, NarouIndexParser
-from nepub.type import Episode
-
-__version__ = version("nepub")
+from nepub.type import Episode, Image
 
 
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("novel_id", help="novel id", type=str)
+    parser.add_argument(
+        "-i", "--illustration", help="include illustrations", action="store_true"
+    )
     parser.add_argument(
         "-o",
         "--output",
@@ -23,20 +23,15 @@ def main():
         default="default.epub",
     )
     args = parser.parse_args()
-    convert_narou_to_epub(args.novel_id, args.output)
+    convert_narou_to_epub(args.novel_id, args.illustration, args.output)
 
 
-def convert_narou_to_epub(novel_id: str, output: str):
-    print(f"noval_id: {novel_id}, output: {output}")
+def convert_narou_to_epub(novel_id: str, illustration: bool, output: str):
+    print(f"noval_id: {novel_id}, illustration: {illustration}, output: {output}")
 
     # index
     index_parser = NarouIndexParser()
-    index_parser.feed(
-        get(
-            f"https://ncode.syosetu.com/{novel_id}/",
-            {"User-agent": f"nepub/{__version__}"},
-        )
-    )
+    index_parser.feed(get(f"https://ncode.syosetu.com/{novel_id}/"))
     title = index_parser.title
     author = index_parser.author
     next_page = index_parser.next_page
@@ -45,12 +40,7 @@ def convert_narou_to_epub(novel_id: str, output: str):
 
     while next_page is not None:
         index_parser.reset()
-        index_parser.feed(
-            get(
-                f"https://ncode.syosetu.com/{next_page}",
-                {"User-agent": f"nepub/{__version__}"},
-            )
-        )
+        index_parser.feed(get(f"https://ncode.syosetu.com/{next_page}"))
         chapters += index_parser.chapters
         next_page = index_parser.next_page
         # 負荷かけないようにちょっと待つ
@@ -58,7 +48,8 @@ def convert_narou_to_epub(novel_id: str, output: str):
 
     # episode
     episodes: List[Episode] = []
-    episode_parser = NarouEpisodeParser()
+    images: List[Image] = []
+    episode_parser = NarouEpisodeParser(illustration)
     for chapter in chapters:
         for episode in chapter["episodes"]:
             episodes.append(episode)
@@ -71,13 +62,11 @@ def convert_narou_to_epub(novel_id: str, output: str):
             f'Downloading ({i + 1}/{len(episodes)}): https://ncode.syosetu.com/{novel_id}/{episode["id"]}/'
         )
         episode_parser.feed(
-            get(
-                f'https://ncode.syosetu.com/{novel_id}/{episode["id"]}/',
-                {"User-agent": f"nepub/{__version__}"},
-            )
+            get(f'https://ncode.syosetu.com/{novel_id}/{episode["id"]}/')
         )
         episode["title"] = episode_parser.title
         episode["paragraphs"] = episode_parser.paragraphs
+        images += episode_parser.images
         episode_parser.reset()
         # 負荷かけないようにちょっと待つ
         time.sleep(1)
@@ -85,11 +74,13 @@ def convert_narou_to_epub(novel_id: str, output: str):
     print("Download is complete!")
 
     # files
-    files: List[Tuple[str, str]] = []
+    files: List[Tuple[str, str | bytes]] = []
     files.append(("mimetype", "application/epub+zip"))
     files.append(("META-INF/container.xml", container()))
     files.append(("src/style.css", style()))
-    files.append(("src/content.opf", content(title, author, created_at, episodes)))
+    files.append(
+        ("src/content.opf", content(title, author, created_at, episodes, images))
+    )
     files.append(("src/navigation.xhtml", nav(chapters)))
     for episode in episodes:
         files.append(
@@ -98,6 +89,8 @@ def convert_narou_to_epub(novel_id: str, output: str):
                 text(episode["title"], episode["paragraphs"]),
             )
         )
+    for image in images:
+        files.append((f'src/image/{image["name"]}', image["data"]))
     compose(output, files)
 
     print(f"Created {output}.")

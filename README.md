@@ -16,13 +16,14 @@ pip install git+https://github.com/ttk1/nepub.git
 
 ```sh
 $ nepub -h
-usage: nepub [-h] [-o <file>] novel_id
+usage: nepub [-h] [-i] [-o <file>] novel_id
 
 positional arguments:
   novel_id              novel id
 
 options:
   -h, --help            show this help message and exit
+  -i, --illustration    include illustrations
   -o <file>, --output <file>
                         output file name
 ```

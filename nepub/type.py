@@ -10,3 +10,10 @@ class Episode(TypedDict):
 class Chapter(TypedDict):
     name: str
     episodes: List[Episode]
+
+
+class Image(TypedDict):
+    name: str
+    id: str
+    type: str
+    data: bytes

@@ -12,6 +12,9 @@
 {%- for episode in episodes %}
         <item media-type="application/xhtml+xml" id="{{ episode.id }}" href="text/{{ episode.id }}.xhtml" />
 {%- endfor %}
+{%- for image in images %}
+        <item media-type="{{ image.type }}" id="{{ image.id }}" href="image/{{ image.name }}" />
+{%- endfor %}
     </manifest>
     <spine page-progression-direction="rtl">
 {%- for episode in episodes %}

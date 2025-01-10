@@ -19,6 +19,7 @@ class TestEpub(TestCase):
         <item media-type="text/css" id="style" href="style.css" />
         <item media-type="application/xhtml+xml" id="001" href="text/001.xhtml" />
         <item media-type="application/xhtml+xml" id="002" href="text/002.xhtml" />
+        <item media-type="image/jpeg" id="003" href="image/003.jpg" />
     </manifest>
     <spine page-progression-direction="rtl">
         <itemref linear="yes" idref="001" />
@@ -32,6 +33,14 @@ class TestEpub(TestCase):
                 [
                     {"id": "001", "title": "たいとる1", "paragraphs": []},
                     {"id": "002", "title": "たいとる2", "paragraphs": []},
+                ],
+                [
+                    {
+                        "type": "image/jpeg",
+                        "id": "003",
+                        "name": "003.jpg",
+                        "data": b"test_data",
+                    }
                 ],
             ),
         )
