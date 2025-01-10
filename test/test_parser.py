@@ -54,8 +54,8 @@ class TestNarouIndexParser(TestCase):
             </div>
             <span class="c-pager__item c-pager__item--first">最初へ</span>
             <span class="c-pager__item c-pager__item--before">前へ</span>
-            <a href="/xxxxxxx/?p=2" class="c-pager__item c-pager__item--next">次へ</a>
-            <a href="/xxxxxxx/?p=9" class="c-pager__item c-pager__item--last">最後へ</a>
+            <a href="/xxxx/?p=2" class="c-pager__item c-pager__item--next">次へ</a>
+            <a href="/xxxx/?p=9" class="c-pager__item c-pager__item--last">最後へ</a>
             <div class="p-eplist__chapter-title">チャプター1</div>
             <div class="p-eplist__sublist">
                 <a href="/xxxx/1/" class="p-eplist__subtitle">エピソード1</a>
@@ -71,7 +71,7 @@ class TestNarouIndexParser(TestCase):
         )
         self.assertEqual("タイトル", parser.title)
         self.assertEqual("作者", parser.author)
-        self.assertEqual("/xxxxxxx/?p=2", parser.next_page)
+        self.assertEqual("/xxxx/?p=2", parser.next_page)
         self.assertEqual(
             [
                 {"name": "default", "episodes": []},
@@ -98,8 +98,8 @@ class TestNarouIndexParser(TestCase):
             <div class="p-novel__author">
                 作者：<a href="https://mypage.syosetu.com/xxxx/">作者</a>
             </div>
-            <a href="/xxxxxxx/" class="c-pager__item c-pager__item--first">最初へ</a>
-            <a href="/xxxxxxx/?p=9" class="c-pager__item c-pager__item--before">前へ</a>
+            <a href="/xxxx/" class="c-pager__item c-pager__item--first">最初へ</a>
+            <a href="/xxxx/?p=9" class="c-pager__item c-pager__item--before">前へ</a>
             <span class="c-pager__item c-pager__item--next">次へ</span>
             <span class="c-pager__item c-pager__item--last">最後へ</span>
             <div class="p-eplist__sublist">
