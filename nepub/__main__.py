@@ -39,8 +39,22 @@ def convert_narou_to_epub(novel_id: str, output: str):
     )
     title = index_parser.title
     author = index_parser.author
+    next_page = index_parser.next_page
     created_at = datetime.datetime.now().astimezone().isoformat(timespec="seconds")
     chapters = index_parser.chapters
+
+    while next_page is not None:
+        index_parser = NarouIndexParser()
+        index_parser.feed(
+            get(
+                f"https://ncode.syosetu.com/{next_page}",
+                {"User-agent": f"nepub/{__version__}"},
+            )
+        )
+        chapters += index_parser.chapters
+        next_page = index_parser.next_page
+        # 負荷かけないようにちょっと待つ
+        time.sleep(1)
 
     # episode
     episodes: List[Episode] = []

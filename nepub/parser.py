@@ -82,6 +82,7 @@ class NarouIndexParser(HTMLParser):
         super().reset()
         self.title = ""
         self.author = ""
+        self.next_page = None
         self.chapters: List[Chapter] = [{"name": "default", "episodes": []}]
         self._classes_stack: List[List[str] | None] = [None, None]
         self._current_chapter: str = ""
@@ -92,7 +93,15 @@ class NarouIndexParser(HTMLParser):
         for attr in attrs:
             if attr[0] == "class":
                 self._classes_stack[-1] = attr[1].split()
-        # 直前のタグの class に subtitle があれば href から episode_id を取り出す
+        # next_page
+        if (
+            self._classes_stack[-1] is not None
+            and "c-pager__item--next" in self._classes_stack[-1]
+        ):
+            for attr in attrs:
+                if attr[0] == "href":
+                    self.next_page = attr[1]
+        # episode_id
         if (
             self._classes_stack[-2] is not None
             and "p-eplist__sublist" in self._classes_stack[-2]
