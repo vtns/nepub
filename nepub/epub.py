@@ -1,8 +1,9 @@
-from typing import List, Tuple
-import zipfile
-from jinja2 import Environment, PackageLoader
 from importlib import resources
-from nepub.type import Chapter, Episode, Image
+from typing import List
+
+from jinja2 import Environment, PackageLoader
+
+from nepub.type import Chapter, Episode, MetadataImage
 
 env = Environment(
     loader=PackageLoader("nepub"),
@@ -18,15 +19,15 @@ template_text = env.get_template("text.xhtml")
 def content(
     title: str,
     author: str,
-    created_at: str,
+    timestamp: str,
     episodes: List[Episode],
-    images: List[Image],
+    images: List[MetadataImage],
 ):
     return template_content.render(
         {
             "title": title,
             "author": author,
-            "created_at": created_at,
+            "timestamp": timestamp,
             "episodes": episodes,
             "images": images,
         }
@@ -47,11 +48,3 @@ def container():
 
 def style():
     return resources.read_text("nepub.files", "style.css")
-
-
-def compose(file_name: str, files: List[Tuple[str, str | bytes]]):
-    with zipfile.ZipFile(file_name, "w", zipfile.ZIP_DEFLATED) as zf:
-        for file in files:
-            zf.writestr(
-                file[0], file[1], compress_type=zipfile.ZIP_DEFLATED, compresslevel=9
-            )

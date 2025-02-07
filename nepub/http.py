@@ -1,6 +1,6 @@
 import hashlib
-from importlib.metadata import version
 import urllib.request
+from importlib.metadata import version
 
 from nepub.type import Image
 

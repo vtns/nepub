@@ -23,9 +23,9 @@ positional arguments:
 
 options:
   -h, --help            show this help message and exit
-  -i, --illustration    include illustrations
+  -i, --illustration    Include illustrations
   -o <file>, --output <file>
-                        output file name; if not specified, ${novel_id}.epub is used
+                        Output file name. If not specified, ${novel_id}.epub is used. Update the file if it exists.
 ```
 
 Example:
@@ -33,13 +33,14 @@ Example:
 ```sh
 $ nepub xxxx
 noval_id: xxxx, illustration: False, output: xxxx.epub
+xxxx.epub found. Loading metadata for update.
 3 episodes found.
 Start downloading...
-Downloading (1/3): https://ncode.syosetu.com/xxxx/1/
-Downloading (2/3): https://ncode.syosetu.com/xxxx/2/
+Download skipped (already up to date) (1/3): https://ncode.syosetu.com/xxxx/1/
+Download skipped (already up to date) (2/3): https://ncode.syosetu.com/xxxx/2/
 Downloading (3/3): https://ncode.syosetu.com/xxxx/3/
-Download is complete!
-Created xxxx.epub.
+Download is complete! (new: 1, skipped: 2)
+Updated xxxx.epub.
 ```
 
 ※ xxxx の部分には小説ページの URL の末尾部分 (`https://ncode.syosetu.com/{ここの文字列}/`) に置き換えてください。

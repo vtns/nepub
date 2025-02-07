@@ -1,10 +1,13 @@
-from typing import List, TypedDict
+from typing import Dict, List, TypedDict
 
 
 class Episode(TypedDict):
     id: str
     title: str
+    created_at: str
+    updated_at: str
     paragraphs: List[str]
+    fetched: bool
 
 
 class Chapter(TypedDict):
@@ -13,7 +16,24 @@ class Chapter(TypedDict):
 
 
 class Image(TypedDict):
-    name: str
     id: str
+    name: str
     type: str
     data: bytes
+
+
+class MetadataImage(TypedDict):
+    id: str
+    name: str
+    type: str
+
+
+class MetadataEpisode(TypedDict):
+    id: str
+    created_at: str
+    updated_at: str
+    images: List[MetadataImage]
+
+
+class Metadata(TypedDict):
+    episodes: Dict[str, MetadataEpisode]
