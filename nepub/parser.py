@@ -7,6 +7,9 @@ from nepub.http import get_image
 from nepub.type import Chapter, Image
 
 PARAGRAPH_ID_PATTERN = re.compile(r"L[1-9][0-9]*")
+IMG_SRC_PATTERN = re.compile(
+    r"//[1-9][0-9]*.mitemin.net/userpageimage/viewimagebig/icode/i[1-9][0-9]*/"
+)
 NEXT_PAGE_PATTERN = re.compile(r"/[a-z0-9]+/\?p=([1-9][0-9]*)")
 EPISODE_ID_PATTERN = re.compile(r"/[a-z0-9]+/([1-9][0-9]*)/")
 
@@ -54,18 +57,19 @@ class NarouEpisodeParser(HTMLParser):
             elif tag == "rt":
                 self._current_paragraph += "<rt>"
             elif self.include_images and tag == "img":
-                # TODO: src のバリデーション
                 img_alt = ""
                 img_src = ""
                 for attr in attrs:
                     if attr[0] == "alt":
-                        img_alt = attr[1]
+                        img_alt = html.escape(attr[1])
                     elif attr[0] == "src":
+                        if not IMG_SRC_PATTERN.fullmatch(attr[1]):
+                            raise Exception(f"img_src が想定しない形式です: {attr[1]}")
                         img_src = attr[1]
                 if img_src:
                     image = get_image(f"https:{img_src}")
                     self._current_paragraph += (
-                        f'<img alt="{img_alt}" src="../image/{image["name"]}"/>'
+                        f'<img alt="{img_alt.strip()}" src="../image/{image["name"]}"/>'
                     )
                     self.images.append(image)
 
@@ -95,7 +99,7 @@ class NarouEpisodeParser(HTMLParser):
         self._classes_stack.pop()
 
     def handle_data(self, data):
-        # ruby, rt, p
+        # ruby, rb, rt, p
         if self._paragraph_flg and self._tag_stack[-1] in ["ruby", "rb", "rt", "p"]:
             self._current_paragraph += html.escape(data)
         # title

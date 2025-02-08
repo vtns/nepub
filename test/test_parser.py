@@ -57,13 +57,16 @@ class TestNarouEpisodeParser(TestCase):
         parser = NarouEpisodeParser(include_images=True)
         parser.feed(
             """
-            <p id="L1"><a href="//example.com/href" target="_blank"><img src="//example.com/src" alt="test_alt" border="0" /></a></p>
+            <p id="L1"><a href="//example.com/href" target="_blank"><img src="//12345.mitemin.net/userpageimage/viewimagebig/icode/i12345/" alt="test_alt" border="0" /></a></p>
             """
         )
         self.assertEqual(
             ['<img alt="test_alt" src="../image/test_name"/>'], parser.paragraphs
         )
-        self.assertEqual("https://example.com/src", get_image.call_args[0][0])
+        self.assertEqual(
+            "https://12345.mitemin.net/userpageimage/viewimagebig/icode/i12345/",
+            get_image.call_args[0][0],
+        )
 
 
 class TestNarouIndexParser(TestCase):
