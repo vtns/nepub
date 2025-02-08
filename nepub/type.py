@@ -37,5 +37,6 @@ class MetadataEpisode(TypedDict):
 
 
 class Metadata(TypedDict):
-    episodes: Dict[str, MetadataEpisode]
+    novel_id: str
     illustration: bool
+    episodes: Dict[str, MetadataEpisode]

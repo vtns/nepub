@@ -39,12 +39,24 @@ def convert_narou_to_epub(novel_id: str, illustration: bool, output: str):
 
     # metadata
     metadata: Metadata | None = None
-    new_metadata: Metadata = {"episodes": {}, "illustration": illustration}
+    new_metadata: Metadata = {
+        "novel_id": novel_id,
+        "illustration": illustration,
+        "episodes": {},
+    }
     if os.path.exists(output):
         print(f"{output} found. Loading metadata for update.")
         with zipfile.ZipFile(output, "r") as zf_old:
             with zf_old.open("src/metadata.json") as f:
                 metadata = json.load(f)
+
+    # check novel_id
+    if metadata and metadata["novel_id"] != novel_id:
+        # metadata の novel_id と値が異なる場合処理を中止する
+        print(
+            f'Process stopped as the novel_id differs from metadata: {metadata["novel_id"]}'
+        )
+        return
 
     # check illustration flag
     if metadata and metadata["illustration"] != illustration:
