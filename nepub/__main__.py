@@ -85,6 +85,7 @@ def convert_narou_to_epub(novel_id: str, illustration: bool, output: str):
                         metadata_episode["created_at"], metadata_episode["updated_at"]
                     ):
                         # 更新がないエピソードはダウンロードをスキップ
+                        episode["title"] = metadata_episode["title"]
                         new_metadata["episodes"][episode["id"]] = metadata_episode
                         metadata_images += metadata_episode["images"]
                         skipped_count += 1
@@ -105,6 +106,7 @@ def convert_narou_to_epub(novel_id: str, illustration: bool, output: str):
         images += episode_parser.images
         new_metadata["episodes"][episode["id"]] = {
             "id": episode["id"],
+            "title": episode["title"],
             "created_at": episode["created_at"],
             "updated_at": episode["updated_at"],
             "images": [
