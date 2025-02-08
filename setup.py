@@ -1,4 +1,4 @@
-from setuptools import setup, find_packages
+from setuptools import find_packages, setup
 
 with open("requirements.txt", encoding="utf-8") as f:
     install_requires = f.read()
@@ -13,7 +13,7 @@ entry_points = {"console_scripts": ["nepub = nepub.__main__:main"]}
 
 setup(
     name="nepub",
-    version="1.1.1",
+    version="1.2.0",
     description="Small tool to convert Narou Novels to vertically written EPUBs.",
     long_description=readme,
     author="tama@ttk1.net",
