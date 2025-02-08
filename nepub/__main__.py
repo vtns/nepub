@@ -76,8 +76,9 @@ def convert_narou_to_epub(novel_id: str, illustration: bool, output: str):
     chapters = index_parser.chapters
     while next_page is not None:
         index_parser.reset()
+        index_parser.chapters = chapters
         index_parser.feed(get(f"https://ncode.syosetu.com/{novel_id}/?p={next_page}"))
-        chapters += index_parser.chapters
+        chapters = index_parser.chapters
         next_page = index_parser.next_page
         # 負荷かけないようにちょっと待つ
         time.sleep(1)
