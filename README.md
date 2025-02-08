@@ -25,7 +25,8 @@ options:
   -h, --help            show this help message and exit
   -i, --illustration    Include illustrations
   -o <file>, --output <file>
-                        Output file name. If not specified, ${novel_id}.epub is used. Update the file if it exists.
+                        Output file name.If not specified, ${novel_id}.epub is used.
+                        Update the file if it exists.
 ```
 
 Example:

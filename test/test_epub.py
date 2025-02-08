@@ -17,6 +17,7 @@ class TestEpub(TestCase):
     <manifest>
         <item media-type="application/xhtml+xml" id="nav" href="navigation.xhtml" properties="nav" />
         <item media-type="text/css" id="style" href="style.css" />
+        <item media-type="application/json" id="metadata" href="metadata.json" />
         <item media-type="application/xhtml+xml" id="001" href="text/001.xhtml" />
         <item media-type="application/xhtml+xml" id="002" href="text/002.xhtml" />
         <item media-type="image/jpeg" id="003" href="image/003.jpg" />
@@ -31,15 +32,28 @@ class TestEpub(TestCase):
                 "作者",
                 "2022-01-01T00:00:00Z",
                 [
-                    {"id": "001", "title": "たいとる1", "paragraphs": []},
-                    {"id": "002", "title": "たいとる2", "paragraphs": []},
+                    {
+                        "id": "001",
+                        "title": "たいとる1",
+                        "created_at": "",
+                        "updated_at": "",
+                        "paragraphs": [],
+                        "fetched": False,
+                    },
+                    {
+                        "id": "002",
+                        "title": "たいとる2",
+                        "created_at": "",
+                        "updated_at": "",
+                        "paragraphs": [],
+                        "fetched": False,
+                    },
                 ],
                 [
                     {
                         "type": "image/jpeg",
                         "id": "003",
                         "name": "003.jpg",
-                        "data": b"test_data",
                     }
                 ],
             ),
@@ -87,14 +101,35 @@ class TestEpub(TestCase):
                     {
                         "name": "ちゃぷたー1",
                         "episodes": [
-                            {"id": "001", "title": "たいとる1", "paragraphs": []},
-                            {"id": "002", "title": "たいとる2", "paragraphs": []},
+                            {
+                                "id": "001",
+                                "title": "たいとる1",
+                                "created_at": "",
+                                "updated_at": "",
+                                "paragraphs": [],
+                                "fetched": False,
+                            },
+                            {
+                                "id": "002",
+                                "title": "たいとる2",
+                                "created_at": "",
+                                "updated_at": "",
+                                "paragraphs": [],
+                                "fetched": False,
+                            },
                         ],
                     },
                     {
                         "name": "ちゃぷたー2",
                         "episodes": [
-                            {"id": "003", "title": "たいとる3", "paragraphs": []}
+                            {
+                                "id": "003",
+                                "title": "たいとる3",
+                                "created_at": "",
+                                "updated_at": "",
+                                "paragraphs": [],
+                                "fetched": False,
+                            }
                         ],
                     },
                 ]
@@ -129,8 +164,22 @@ class TestEpub(TestCase):
                     {
                         "name": "default",
                         "episodes": [
-                            {"id": "001", "title": "たいとる1", "paragraphs": []},
-                            {"id": "002", "title": "たいとる2", "paragraphs": []},
+                            {
+                                "id": "001",
+                                "title": "たいとる1",
+                                "created_at": "",
+                                "updated_at": "",
+                                "paragraphs": [],
+                                "fetched": False,
+                            },
+                            {
+                                "id": "002",
+                                "title": "たいとる2",
+                                "created_at": "",
+                                "updated_at": "",
+                                "paragraphs": [],
+                                "fetched": False,
+                            },
                         ],
                     }
                 ]

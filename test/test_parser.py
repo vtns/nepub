@@ -1,5 +1,6 @@
 from unittest import TestCase
 from unittest.mock import patch
+
 from nepub.parser import NarouEpisodeParser, NarouIndexParser
 
 
@@ -79,32 +80,61 @@ class TestNarouIndexParser(TestCase):
             <div class="p-eplist__chapter-title">チャプター1</div>
             <div class="p-eplist__sublist">
                 <a href="/xxxx/1/" class="p-eplist__subtitle">エピソード1</a>
+                <div class="p-eplist__update">1999/01/01 00:00</div>
             </div>
             <div class="p-eplist__sublist">
                 <a href="/xxxx/2/" class="p-eplist__subtitle">エピソード2</a>
+                <div class="p-eplist__update">
+                    1999/01/02 00:00
+                    <span title="2000/01/02 00:00 改稿">（<u>改</u>）</span>
+                </div>
             </div>
             <div class="p-eplist__chapter-title">チャプター2</div>
             <div class="p-eplist__sublist">
                 <a href="/xxxx/3/" class="p-eplist__subtitle">エピソード3</a>
+                <div class="p-eplist__update">1999/01/03 00:00</div>
             </div>
             """
         )
         self.assertEqual("タイトル", parser.title)
         self.assertEqual("作者", parser.author)
-        self.assertEqual("/xxxx/?p=2", parser.next_page)
+        self.assertEqual("2", parser.next_page)
         self.assertEqual(
             [
                 {"name": "default", "episodes": []},
                 {
                     "name": "チャプター1",
                     "episodes": [
-                        {"id": "1", "title": "", "paragraphs": []},
-                        {"id": "2", "title": "", "paragraphs": []},
+                        {
+                            "id": "1",
+                            "title": "",
+                            "created_at": "1999/01/01 00:00",
+                            "updated_at": "",
+                            "paragraphs": [],
+                            "fetched": False,
+                        },
+                        {
+                            "id": "2",
+                            "title": "",
+                            "created_at": "1999/01/02 00:00",
+                            "updated_at": "2000/01/02 00:00",
+                            "paragraphs": [],
+                            "fetched": False,
+                        },
                     ],
                 },
                 {
                     "name": "チャプター2",
-                    "episodes": [{"id": "3", "title": "", "paragraphs": []}],
+                    "episodes": [
+                        {
+                            "id": "3",
+                            "title": "",
+                            "created_at": "1999/01/03 00:00",
+                            "updated_at": "",
+                            "paragraphs": [],
+                            "fetched": False,
+                        }
+                    ],
                 },
             ],
             parser.chapters,
@@ -124,6 +154,7 @@ class TestNarouIndexParser(TestCase):
             <span class="c-pager__item c-pager__item--last">最後へ</span>
             <div class="p-eplist__sublist">
                 <a href="/xxxx/999/" class="p-eplist__subtitle">エピソード1</a>
+                <div class="p-eplist__update">1999/12/31 23:59</div>
             </div>
             """
         )
@@ -135,7 +166,14 @@ class TestNarouIndexParser(TestCase):
                 {
                     "name": "default",
                     "episodes": [
-                        {"id": "999", "title": "", "paragraphs": []},
+                        {
+                            "id": "999",
+                            "title": "",
+                            "created_at": "1999/12/31 23:59",
+                            "updated_at": "",
+                            "paragraphs": [],
+                            "fetched": False,
+                        },
                     ],
                 },
             ],
