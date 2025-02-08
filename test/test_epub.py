@@ -51,9 +51,9 @@ class TestEpub(TestCase):
                 ],
                 [
                     {
-                        "type": "image/jpeg",
                         "id": "003",
                         "name": "003.jpg",
+                        "type": "image/jpeg",
                     }
                 ],
             ),

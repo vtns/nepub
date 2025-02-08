@@ -18,7 +18,7 @@ class NarouEpisodeParser(HTMLParser):
 
     def reset(self):
         super().reset()
-        self.title = ""
+        self._title = ""
         self.paragraphs: List[str] = []
         self.images: List[Image] = []
         self._tag_stack: List[str | None] = [None, None]
@@ -26,6 +26,10 @@ class NarouEpisodeParser(HTMLParser):
         self._classes_stack: List[List[str] | None] = [None]
         self._paragraph_flg = False
         self._current_paragraph = ""
+
+    @property
+    def title(self):
+        return self._title.strip()
 
     def handle_starttag(self, tag, attrs):
         # tag, id, classes をスタックに積む
@@ -73,9 +77,12 @@ class NarouEpisodeParser(HTMLParser):
                 self._current_paragraph += "</ruby>"
             elif tag == "rt":
                 self._current_paragraph += "</rt>"
-            elif tag == "p" and self._current_paragraph:
-                # 空の段落は読み飛ばす
-                self.paragraphs.append(self._current_paragraph)
+            elif tag == "p":
+                # 先頭の字下げを残すため rstrip にしている
+                paragraph = self._current_paragraph.rstrip()
+                if paragraph:
+                    # 空の段落は読み飛ばす
+                    self.paragraphs.append(paragraph)
                 self._current_paragraph = ""
         # paragraph_flg
         if self._id_stack[-1] is not None and PARAGRAPH_ID_PATTERN.fullmatch(
@@ -90,13 +97,13 @@ class NarouEpisodeParser(HTMLParser):
     def handle_data(self, data):
         # ruby, rt, p
         if self._paragraph_flg and self._tag_stack[-1] in ["ruby", "rb", "rt", "p"]:
-            self._current_paragraph += html.escape(data.rstrip())
+            self._current_paragraph += html.escape(data)
         # title
         if (
             self._classes_stack[-1] is not None
             and "p-novel__title" in self._classes_stack[-1]
         ):
-            self.title += html.escape(data.rstrip())
+            self._title += html.escape(data)
 
 
 class NarouIndexParser(HTMLParser):
@@ -112,11 +119,11 @@ class NarouIndexParser(HTMLParser):
 
     @property
     def title(self):
-        return html.escape(self._title.strip())
+        return self._title.strip()
 
     @property
     def author(self):
-        return html.escape(self._author.strip())
+        return self._author.strip()
 
     def handle_starttag(self, tag, attrs):
         # classes をスタックに積む
@@ -167,13 +174,13 @@ class NarouIndexParser(HTMLParser):
         if tag == "div":
             if self._current_chapter:
                 self.chapters.append(
-                    {"name": html.escape(self._current_chapter.strip()), "episodes": []}
+                    {"name": self._current_chapter.strip(), "episodes": []}
                 )
                 self._current_chapter = ""
             elif self._current_episode_created_at:
-                self.chapters[-1]["episodes"][-1]["created_at"] = html.escape(
-                    self._current_episode_created_at.strip()
-                )
+                self.chapters[-1]["episodes"][-1][
+                    "created_at"
+                ] = self._current_episode_created_at.strip()
                 self._current_episode_created_at = ""
         # classes をスタックからおろす
         self._classes_stack.pop()
@@ -184,22 +191,22 @@ class NarouIndexParser(HTMLParser):
             self._classes_stack[-1] is not None
             and "p-novel__title" in self._classes_stack[-1]
         ):
-            self._title += data
+            self._title += html.escape(data)
         # author
         if (
             self._classes_stack[-2] is not None
             and "p-novel__author" in self._classes_stack[-2]
         ):
-            self._author += data
+            self._author += html.escape(data)
         # chapter
         if (
             self._classes_stack[-1] is not None
             and "p-eplist__chapter-title" in self._classes_stack[-1]
         ):
-            self._current_chapter += data
+            self._current_chapter += html.escape(data)
         # episode_created_at
         if (
             self._classes_stack[-1] is not None
             and "p-eplist__update" in self._classes_stack[-1]
         ):
-            self._current_episode_created_at += data
+            self._current_episode_created_at += html.escape(data)

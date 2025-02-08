@@ -15,6 +15,8 @@ class TestNarouEpisodeParser(TestCase):
             <p id="L3"></p>
             <p id="L4">「段落4」</p>
             <p id="L5">"段落5"</p>
+            <p id="L6">　　　　</p>
+            <p id="L7">    </p>
             """
         )
         self.assertEqual("タイトル", parser.title)
@@ -29,8 +31,8 @@ class TestNarouEpisodeParser(TestCase):
             <h1 class="p-novel__title p-novel__title--rensai">タイトル</h1>
             <p id="L1">あああ<ruby>段落1<rt>だんらくいち</rt></ruby>あああ</p>
             <p id="L2">いいい<ruby>段落2<rp>(</rp><rt>だんらくに</rt><rp>)</rp></ruby>いいい</p>
-            <p id="L3">ううう<ruby><rb>段落3<rt>だんらくさん</rt></ruby>ううう</p>
-            <p id="L3">えええ<ruby><rb>段落4<rt>だんらくよん</rt></ruby>えええ</p>
+            <p id="L3">ううう<ruby><rb>段落3</rb><rt>だんらくさん</rt></ruby>ううう</p>
+            <p id="L3">えええ<ruby><rb>段落4</rb><rt>だんらくよん</rt></ruby>えええ</p>
             """
         )
         self.assertEqual("タイトル", parser.title)
@@ -47,9 +49,9 @@ class TestNarouEpisodeParser(TestCase):
     @patch("nepub.parser.get_image")
     def test_narou_episode_parser_image(self, get_image):
         get_image.return_value = {
-            "type": "image/jpeg",
             "id": "test_id",
             "name": "test_name",
+            "type": "image/jpeg",
             "data": b"test_data",
         }
         parser = NarouEpisodeParser(include_images=True)
