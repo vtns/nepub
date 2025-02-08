@@ -38,3 +38,4 @@ class MetadataEpisode(TypedDict):
 
 class Metadata(TypedDict):
     episodes: Dict[str, MetadataEpisode]
+    illustration: bool
