@@ -5,6 +5,7 @@ import os
 import tempfile
 import time
 import zipfile
+import re
 from typing import List
 
 from nepub.epub import container, content, nav, style, text
@@ -161,9 +162,15 @@ def convert_narou_to_epub(novel_id: str, illustration: bool, output: str):
                     zf_new.writestr(f'src/image/{image["name"]}', image["data"])
             for episode in episodes:
                 if episode["fetched"]:
+                    def digitis_like(m):
+                        s = m.group(0)
+                        if len(s) == 2:
+                            return '<span style="-webkit-text-combine:horizontal">' + s +  '</span>'
+                        return s.translate(str.maketrans({'0': '０', '1': '１', '2': '２', '3': '３', '4': '４', '5': '５', '6': '６', '7': '７', '8': '８', '9': '９', '!': '！', '?': '？'}))
+                    episode_text = re.sub(pattern = '(\d{1,})|([!?]+)', repl=digitis_like, string=text(episode["title"], episode["paragraphs"]))
                     zf_new.writestr(
                         f'src/text/{episode["id"]}.xhtml',
-                        text(episode["title"], episode["paragraphs"]),
+                        episode_text,
                     )
             if metadata:
                 with zipfile.ZipFile(output, "r") as zf_old:
@@ -180,8 +187,15 @@ def convert_narou_to_epub(novel_id: str, illustration: bool, output: str):
                     for episode in episodes:
                         if not episode["fetched"]:
                             with zf_old.open(f'src/text/{episode["id"]}.xhtml') as f:
+                                def digitis_like(m):
+                                    s = m.group(0)
+                                    if len(s) == 2:
+                                        return '<span style="-webkit-text-combine:horizontal">' + s +  '</span>'
+                                    return s.translate(str.maketrans({'0': '０', '1': '１', '2': '２', '3': '３', '4': '４', '5': '５', '6': '６', '7': '７', '8': '８', '9': '９', '!': '！', '?': '？'}))
+                                episode_text = re.sub(pattern = '(\d{1,})|([!?]+)', repl=digitis_like, string=f.read().decode())
                                 zf_new.writestr(
-                                    f'src/text/{episode["id"]}.xhtml', f.read()
+                                    f'src/text/{episode["id"]}.xhtml', 
+                                    episode_text
                                 )
             zf_new.writestr("mimetype", "application/epub+zip")
             zf_new.writestr("META-INF/container.xml", container())
