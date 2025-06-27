@@ -26,7 +26,7 @@ options:
   -h, --help            show this help message and exit
   -i, --illustration    Include illustrations
   -o <file>, --output <file>
-                        Output file name.If not specified, ${novel_id}.epub is used.
+                        Output file name. If not specified, ${novel_id}.epub is used.
                         Update the file if it exists.
 ```
 
@@ -34,7 +34,7 @@ Example:
 
 ```sh
 $ nepub xxxx
-noval_id: xxxx, illustration: False, output: xxxx.epub
+novel_id: xxxx, illustration: False, output: xxxx.epub
 xxxx.epub found. Loading metadata for update.
 3 episodes found.
 Start downloading...

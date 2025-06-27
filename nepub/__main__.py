@@ -35,7 +35,7 @@ def main():
 
 
 def convert_narou_to_epub(novel_id: str, illustration: bool, output: str):
-    print(f"noval_id: {novel_id}, illustration: {illustration}, output: {output}")
+    print(f"novel_id: {novel_id}, illustration: {illustration}, output: {output}")
 
     # metadata
     metadata: Metadata | None = None
