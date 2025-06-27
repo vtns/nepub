@@ -5,6 +5,7 @@ from typing import List
 
 from nepub.http import get_image
 from nepub.type import Chapter, Image
+from nepub.util import half_to_full
 
 PARAGRAPH_ID_PATTERN = re.compile(r"L[1-9][0-9]*")
 IMG_SRC_PATTERN = re.compile(
@@ -12,6 +13,25 @@ IMG_SRC_PATTERN = re.compile(
 )
 NEXT_PAGE_PATTERN = re.compile(r"/[a-z0-9]+/\?p=([1-9][0-9]*)")
 EPISODE_ID_PATTERN = re.compile(r"/[a-z0-9]+/([1-9][0-9]*)/")
+TCY_2_DIGITS_PATTERN = re.compile(r"(?<![\x00-\x7F])[0-9]{2}(?![\x00-\x7F])")
+TCY_HALF_CHAR_PATTERN = re.compile(r"(?<![\x00-\x7F])[a-zA-Z0-9](?![\x00-\x7F])")
+
+
+def tcy(text):
+    # ダブルクオートを爪括弧に変換
+    text = text.replace("“", "〝").replace("”", "〟")
+    # 記号
+    text = (
+        text.replace("?", "？")
+        .replace("!", "！")
+        .replace("！？", "⁉")
+        .replace("？！", "⁈")
+        # .replace(".", "．")
+        # .replace(",", "，")
+    )
+    text = TCY_2_DIGITS_PATTERN.sub(r'<span class="tcy">\g<0></span>', text)
+    text = TCY_HALF_CHAR_PATTERN.sub(lambda m: half_to_full(m.group(0)), text)
+    return text
 
 
 class NarouEpisodeParser(HTMLParser):
@@ -29,12 +49,16 @@ class NarouEpisodeParser(HTMLParser):
         self._classes_stack: List[List[str] | None] = [None]
         self._paragraph_flg = False
         self._current_paragraph = ""
+        self._paragraph_buff = ""
 
     @property
     def title(self):
-        return self._title.strip()
+        return html.escape(self._title).strip()
 
     def handle_starttag(self, tag, attrs):
+        # バッファのデータをエスケープ & 縦中横処理し _current_paragraph に連結
+        self._current_paragraph += tcy(html.escape(self._paragraph_buff))
+        self._paragraph_buff = ""
         # tag, id, classes をスタックに積む
         self._tag_stack.append(tag)
         self._id_stack.append(None)
@@ -74,6 +98,9 @@ class NarouEpisodeParser(HTMLParser):
                     self.images.append(image)
 
     def handle_endtag(self, tag):
+        # バッファのデータをエスケープ & 縦中横処理し _current_paragraph に連結
+        self._current_paragraph += tcy(html.escape(self._paragraph_buff))
+        self._paragraph_buff = ""
         # ruby, rt, p
         # rb タグは省略する
         if self._paragraph_flg:
@@ -101,13 +128,14 @@ class NarouEpisodeParser(HTMLParser):
     def handle_data(self, data):
         # ruby, rb, rt, p
         if self._paragraph_flg and self._tag_stack[-1] in ["ruby", "rb", "rt", "p"]:
-            self._current_paragraph += html.escape(data)
+            # 分割して処理されることを考慮し一旦バッファに入れる
+            self._paragraph_buff += data
         # title
         if (
             self._classes_stack[-1] is not None
             and "p-novel__title" in self._classes_stack[-1]
         ):
-            self._title += html.escape(data)
+            self._title += data
 
 
 class NarouIndexParser(HTMLParser):
@@ -123,11 +151,11 @@ class NarouIndexParser(HTMLParser):
 
     @property
     def title(self):
-        return self._title.strip()
+        return html.escape(self._title).strip()
 
     @property
     def author(self):
-        return self._author.strip()
+        return html.escape(self._author).strip()
 
     def handle_starttag(self, tag, attrs):
         # classes をスタックに積む
@@ -178,13 +206,13 @@ class NarouIndexParser(HTMLParser):
         if tag == "div":
             if self._current_chapter:
                 self.chapters.append(
-                    {"name": self._current_chapter.strip(), "episodes": []}
+                    {"name": html.escape(self._current_chapter).strip(), "episodes": []}
                 )
                 self._current_chapter = ""
             elif self._current_episode_created_at:
-                self.chapters[-1]["episodes"][-1][
-                    "created_at"
-                ] = self._current_episode_created_at.strip()
+                self.chapters[-1]["episodes"][-1]["created_at"] = html.escape(
+                    self._current_episode_created_at
+                ).strip()
                 self._current_episode_created_at = ""
         # classes をスタックからおろす
         self._classes_stack.pop()
@@ -195,22 +223,22 @@ class NarouIndexParser(HTMLParser):
             self._classes_stack[-1] is not None
             and "p-novel__title" in self._classes_stack[-1]
         ):
-            self._title += html.escape(data)
+            self._title += data
         # author
         if (
             self._classes_stack[-2] is not None
             and "p-novel__author" in self._classes_stack[-2]
         ):
-            self._author += html.escape(data)
+            self._author += data
         # chapter
         if (
             self._classes_stack[-1] is not None
             and "p-eplist__chapter-title" in self._classes_stack[-1]
         ):
-            self._current_chapter += html.escape(data)
+            self._current_chapter += data
         # episode_created_at
         if (
             self._classes_stack[-1] is not None
             and "p-eplist__update" in self._classes_stack[-1]
         ):
-            self._current_episode_created_at += html.escape(data)
+            self._current_episode_created_at += data
