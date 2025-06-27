@@ -191,3 +191,4 @@ class TestTcy(TestCase):
         self.assertEqual(
             tcy("今日は6月28日です!?"), '今日は６月<span class="tcy">28</span>日です⁉'
         )
+        self.assertEqual(tcy("This is a pen."), "This is a pen.")
