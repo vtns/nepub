@@ -35,7 +35,7 @@ Example:
 
 ```sh
 $ nepub xxxx
-novel_id: xxxx, illustration: False, output: xxxx.epub
+novel_id: xxxx, illustration: False, tcy: False, output: xxxx.epub
 xxxx.epub found. Loading metadata for update.
 3 episodes found.
 Start downloading...
