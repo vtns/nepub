@@ -14,7 +14,7 @@ IMG_SRC_PATTERN = re.compile(
 NEXT_PAGE_PATTERN = re.compile(r"/[a-z0-9]+/\?p=([1-9][0-9]*)")
 EPISODE_ID_PATTERN = re.compile(r"/[a-z0-9]+/([1-9][0-9]*)/")
 TCY_2_DIGITS_PATTERN = re.compile(r"(?<![\x00-\x7F])[0-9]{2}(?![\x00-\x7F])")
-TCY_HALF_CHAR_PATTERN = re.compile(r"(?<![\x00-\x7F])[a-zA-Z0-9.,!?]+(?![\x00-\x7F])")
+TCY_HALF_CHAR_PATTERN = re.compile(r"(?<![\x00-\x7F])[a-zA-Z0-9.,!?%]+(?![\x00-\x7F])")
 
 
 def tcy(text):
@@ -24,7 +24,7 @@ def tcy(text):
     )
     # ダブルクオートを爪括弧に変換
     text = text.replace("“", "〝").replace("”", "〟")
-    # 記号
+    # 連続する感嘆符・疑問符
     text = (
         text.replace("！？", "⁉")
         .replace("？！", "⁈")
