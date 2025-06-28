@@ -1,4 +1,4 @@
-def half_to_full(c):
+def half_to_full(c: str):
     return {
         "A": "Ａ",
         "B": "Ｂ",

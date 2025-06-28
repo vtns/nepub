@@ -25,6 +25,7 @@ positional arguments:
 options:
   -h, --help            show this help message and exit
   -i, --illustration    Include illustrations
+  -t, --tcy             Enable Tate-Chu-Yoko conversion
   -o <file>, --output <file>
                         Output file name. If not specified, ${novel_id}.epub is used.
                         Update the file if it exists.

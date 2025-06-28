@@ -17,7 +17,7 @@ TCY_2_DIGITS_PATTERN = re.compile(r"(?<![\x00-\x7F])[0-9]{2}(?![\x00-\x7F])")
 TCY_HALF_CHAR_PATTERN = re.compile(r"(?<![\x00-\x7F])[a-zA-Z0-9.,!?%]+(?![\x00-\x7F])")
 
 
-def tcy(text):
+def tcy(text: str):
     text = TCY_2_DIGITS_PATTERN.sub(r'<span class="tcy">\g<0></span>', text)
     text = TCY_HALF_CHAR_PATTERN.sub(
         lambda m: "".join(half_to_full(c) for c in m.group(0)), text
@@ -35,9 +35,10 @@ def tcy(text):
 
 
 class NarouEpisodeParser(HTMLParser):
-    def __init__(self, include_images=False):
+    def __init__(self, include_images=False, convert_tcy=False):
         super().__init__()
         self.include_images = include_images
+        self.convert_tcy = convert_tcy
 
     def reset(self):
         super().reset()
@@ -57,7 +58,10 @@ class NarouEpisodeParser(HTMLParser):
 
     def handle_starttag(self, tag, attrs):
         # バッファのデータをエスケープ & 縦中横処理し _current_paragraph に連結
-        self._current_paragraph += tcy(html.escape(self._paragraph_buff))
+        if self.convert_tcy:
+            self._current_paragraph += tcy(html.escape(self._paragraph_buff))
+        else:
+            self._current_paragraph += html.escape(self._paragraph_buff)
         self._paragraph_buff = ""
         # tag, id, classes をスタックに積む
         self._tag_stack.append(tag)
@@ -99,7 +103,10 @@ class NarouEpisodeParser(HTMLParser):
 
     def handle_endtag(self, tag):
         # バッファのデータをエスケープ & 縦中横処理し _current_paragraph に連結
-        self._current_paragraph += tcy(html.escape(self._paragraph_buff))
+        if self.convert_tcy:
+            self._current_paragraph += tcy(html.escape(self._paragraph_buff))
+        else:
+            self._current_paragraph += html.escape(self._paragraph_buff)
         self._paragraph_buff = ""
         # ruby, rt, p
         # rb タグは省略する

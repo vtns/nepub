@@ -1,7 +1,7 @@
 from unittest import TestCase
 from unittest.mock import patch
 
-from nepub.parser import NarouEpisodeParser, NarouIndexParser, tcy
+from nepub.parser import NarouEpisodeParser, NarouIndexParser
 
 
 class TestNarouEpisodeParser(TestCase):
@@ -21,7 +21,7 @@ class TestNarouEpisodeParser(TestCase):
         )
         self.assertEqual("タイトル", parser.title)
         self.assertEqual(
-            ["　段落１", "「段落４」", "&quot;段落5&quot;"], parser.paragraphs
+            ["　段落1", "「段落4」", "&quot;段落5&quot;"], parser.paragraphs
         )
 
     def test_narou_episode_parser_ruby(self):
@@ -38,10 +38,10 @@ class TestNarouEpisodeParser(TestCase):
         self.assertEqual("タイトル", parser.title)
         self.assertEqual(
             [
-                "あああ<ruby>段落１<rt>だんらくいち</rt></ruby>あああ",
-                "いいい<ruby>段落２<rt>だんらくに</rt></ruby>いいい",
-                "ううう<ruby>段落３<rt>だんらくさん</rt></ruby>ううう",
-                "えええ<ruby>段落４<rt>だんらくよん</rt></ruby>えええ",
+                "あああ<ruby>段落1<rt>だんらくいち</rt></ruby>あああ",
+                "いいい<ruby>段落2<rt>だんらくに</rt></ruby>いいい",
+                "ううう<ruby>段落3<rt>だんらくさん</rt></ruby>ううう",
+                "えええ<ruby>段落4<rt>だんらくよん</rt></ruby>えええ",
             ],
             parser.paragraphs,
         )
@@ -66,6 +66,21 @@ class TestNarouEpisodeParser(TestCase):
         self.assertEqual(
             "https://12345.mitemin.net/userpageimage/viewimagebig/icode/i12345/",
             get_image.call_args[0][0],
+        )
+
+    def test_narou_episode_parser_tcy(self):
+        parser = NarouEpisodeParser(convert_tcy=True)
+        parser.feed(
+            """
+            <h1 class="p-novel__title p-novel__title--rensai">タイトルX</h1>
+            <p id="L1">今日は6月28日です!?</p>
+            <p id="L2">This is a pen.</p>
+            """
+        )
+        self.assertEqual("タイトルＸ", parser.title)
+        self.assertEqual(
+            ['今日は６月<span class="tcy">28</span>日です⁉', "This is a pen."],
+            parser.paragraphs,
         )
 
 
@@ -184,11 +199,3 @@ class TestNarouIndexParser(TestCase):
             ],
             parser.chapters,
         )
-
-
-class TestTcy(TestCase):
-    def test_tcy(self):
-        self.assertEqual(
-            tcy("今日は6月28日です!?"), '今日は６月<span class="tcy">28</span>日です⁉'
-        )
-        self.assertEqual(tcy("This is a pen."), "This is a pen.")

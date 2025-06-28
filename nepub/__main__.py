@@ -20,6 +20,9 @@ def main():
         "-i", "--illustration", help="Include illustrations", action="store_true"
     )
     parser.add_argument(
+        "-t", "--tcy", help="Enable Tate-Chu-Yoko conversion", action="store_true"
+    )
+    parser.add_argument(
         "-o",
         "--output",
         metavar="<file>",
@@ -31,17 +34,20 @@ def main():
         output = args.output
     else:
         output = f"{args.novel_id}.epub"
-    convert_narou_to_epub(args.novel_id, args.illustration, output)
+    convert_narou_to_epub(args.novel_id, args.illustration, args.tcy, output)
 
 
-def convert_narou_to_epub(novel_id: str, illustration: bool, output: str):
-    print(f"novel_id: {novel_id}, illustration: {illustration}, output: {output}")
+def convert_narou_to_epub(novel_id: str, illustration: bool, tcy: bool, output: str):
+    print(
+        f"novel_id: {novel_id}, illustration: {illustration}, tcy: {tcy}, output: {output}"
+    )
 
     # metadata
     metadata: Metadata | None = None
     new_metadata: Metadata = {
         "novel_id": novel_id,
         "illustration": illustration,
+        "tcy": tcy,
         "episodes": {},
     }
     if os.path.exists(output):
@@ -59,10 +65,18 @@ def convert_narou_to_epub(novel_id: str, illustration: bool, output: str):
         return
 
     # check illustration flag
-    if metadata and metadata["illustration"] != illustration:
+    if metadata and metadata.get("illustration", False) != illustration:
         # metadata の illustration フラグと値が異なる場合処理を中止する
         print(
-            f'Process stopped as the illustration value differs from metadata: {metadata["illustration"]}'
+            f'Process stopped as the illustration value differs from metadata: {metadata.get("illustration", False)}'
+        )
+        return
+
+    # check tcy flag
+    if metadata and metadata.get("tcy", False) != tcy:
+        # metadata の tcy フラグと値が異なる場合処理を中止する
+        print(
+            f'Process stopped as the tcy value differs from metadata: {metadata.get("tcy", False)}'
         )
         return
 
@@ -89,7 +103,7 @@ def convert_narou_to_epub(novel_id: str, illustration: bool, output: str):
     episodes: List[Episode] = []
     images: List[Image] = []
     metadata_images: List[MetadataImage] = []
-    episode_parser = NarouEpisodeParser(illustration)
+    episode_parser = NarouEpisodeParser(illustration, tcy)
     for chapter in chapters:
         for episode in chapter["episodes"]:
             episodes.append(episode)
