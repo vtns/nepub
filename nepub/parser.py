@@ -54,7 +54,10 @@ class NarouEpisodeParser(HTMLParser):
 
     @property
     def title(self):
-        return tcy(html.escape(self._title).strip())
+        if self.convert_tcy:
+            return tcy(html.escape(self._title).strip())
+        else:
+            return html.escape(self._title).strip()
 
     def handle_starttag(self, tag, attrs):
         # バッファのデータをエスケープ & 縦中横処理し _current_paragraph に連結
