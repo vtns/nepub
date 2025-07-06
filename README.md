@@ -17,7 +17,7 @@ pip install git+https://github.com/ttk1/nepub.git
 
 ```sh
 $ nepub -h
-usage: nepub [-h] [-i] [-o <file>] novel_id
+usage: nepub [-h] [-i] [-t] [-o <file>] novel_id
 
 positional arguments:
   novel_id              novel id
