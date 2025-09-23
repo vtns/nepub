@@ -13,6 +13,7 @@ class TestEpub(TestCase):
         <dc:creator id="creator01">作者</dc:creator>
         <dc:language>ja</dc:language>
         <meta property="dcterms:modified">2022-01-01T00:00:00Z</meta>
+        <meta name="primary-writing-mode" content="horizontal-rl"/>
     </metadata>
     <manifest>
         <item media-type="application/xhtml+xml" id="nav" href="navigation.xhtml" properties="nav" />

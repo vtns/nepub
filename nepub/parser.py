@@ -165,7 +165,7 @@ class NarouIndexParser(HTMLParser):
 
     @property
     def author(self):
-        return html.escape(self._author).strip()
+        return html.escape(self._author).strip().removeprefix("作者：")
 
     def handle_starttag(self, tag, attrs):
         # classes をスタックに積む
@@ -235,7 +235,11 @@ class NarouIndexParser(HTMLParser):
         ):
             self._title += data
         # author
+        # 作者名がリンクになってる場合となっていない場合を考慮
         if (
+            self._classes_stack[-1] is not None
+            and "p-novel__author" in self._classes_stack[-1]
+        ) or (
             self._classes_stack[-2] is not None
             and "p-novel__author" in self._classes_stack[-2]
         ):

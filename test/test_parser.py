@@ -166,7 +166,7 @@ class TestNarouIndexParser(TestCase):
             """
             <h1 class="p-novel__title">タイトル</h1>
             <div class="p-novel__author">
-                作者：<a href="https://mypage.syosetu.com/xxxx/">作者</a>
+                作者：作者
             </div>
             <a href="/xxxx/" class="c-pager__item c-pager__item--first">最初へ</a>
             <a href="/xxxx/?p=9" class="c-pager__item c-pager__item--before">前へ</a>

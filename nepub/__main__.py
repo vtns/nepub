@@ -108,6 +108,9 @@ def convert_narou_to_epub(novel_id: str, illustration: bool, tcy: bool, output: 
         for episode in chapter["episodes"]:
             episodes.append(episode)
 
+    print(f"title: {title}")
+    print(f"author: {author}")
+
     print(f"{len(episodes)} episodes found.")
     print("Start downloading...")
 
