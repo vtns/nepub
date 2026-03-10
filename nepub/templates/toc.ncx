@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ncx xmlns="http://www.daisy.org/z3986/2005/ncx/" version="2005-1">
+    <head>
+        <meta name="dtb:depth" content="2" />
+    </head>
+    <docTitle>
+        <text>{{ title }}</text>
+    </docTitle>
+    <navMap>
+{%- set counter = namespace(n=1) %}
+{%- for chapter in chapters %}
+{%- if chapter.name == "default" %}
+{%- for episode in chapter.episodes %}
+        <navPoint id="navPoint-{{ counter.n }}" playOrder="{{ counter.n }}">
+            <navLabel>
+                <text>{{ episode.title }}</text>
+            </navLabel>
+            <content src="text/{{ episode.id }}.xhtml" />
+        </navPoint>
+{%- set counter.n = counter.n + 1 %}
+{%- endfor %}
+{%- elif chapter.episodes|length > 0 %}
+        <navPoint id="navPoint-{{ counter.n }}" playOrder="{{ counter.n }}">
+            <navLabel>
+                <text>{{ chapter.name }}</text>
+            </navLabel>
+            <content src="text/{{ chapter.episodes[0].id }}.xhtml" />
+{%- set counter.n = counter.n + 1 %}
+{%- for episode in chapter.episodes %}
+            <navPoint id="navPoint-{{ counter.n }}" playOrder="{{ counter.n }}">
+                <navLabel>
+                    <text>{{ episode.title }}</text>
+                </navLabel>
+                <content src="text/{{ episode.id }}.xhtml" />
+            </navPoint>
+{%- set counter.n = counter.n + 1 %}
+{%- endfor %}
+        </navPoint>
+{%- endif %}
+{%- endfor %}
+    </navMap>
+</ncx>

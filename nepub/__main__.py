@@ -7,7 +7,7 @@ import time
 import zipfile
 from typing import List
 
-from nepub.epub import container, content, nav, style, text
+from nepub.epub import container, content, nav, ncx, style, text
 from nepub.http import get
 from nepub.parser.kakuyomu import KakuyomuEpisodeParser, KakuyomuIndexParser
 from nepub.parser.narou import NarouEpisodeParser, NarouIndexParser
@@ -170,7 +170,7 @@ def convert_narou_to_epub(
         chapters = index_parser.chapters
         next_page = index_parser.next_page
         # 負荷かけないようにちょっと待つ
-        time.sleep(1)
+        time.sleep(0.25)
 
     # episode
     downloaded_count = 0
@@ -246,7 +246,7 @@ def convert_narou_to_epub(
         }
         episode_parser.reset()
         # 負荷かけないようにちょっと待つ
-        time.sleep(1)
+        time.sleep(0.25)
     # 処理対象外かつ既存のファイルに存在しないエピソードを削除
     episodes = [
         episode for episode in episodes if episode["id"] not in ignored_episode_ids
@@ -308,6 +308,7 @@ def convert_narou_to_epub(
                 content(title, author, timestamp, episodes, unique_images),
             )
             zf_new.writestr("src/navigation.xhtml", nav(chapters))
+            zf_new.writestr("src/toc.ncx", ncx(title, chapters))
             zf_new.writestr("src/metadata.json", json.dumps(new_metadata))
 
     if os.path.exists(output):

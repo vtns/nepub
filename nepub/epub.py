@@ -13,6 +13,7 @@ env = Environment(
 )
 template_content = env.get_template("content.opf")
 template_navigation = env.get_template("navigation.xhtml")
+template_ncx = env.get_template("toc.ncx")
 template_text = env.get_template("text.xhtml")
 
 
@@ -36,6 +37,10 @@ def content(
 
 def nav(chapters: List[Chapter]):
     return template_navigation.render({"chapters": chapters})
+
+
+def ncx(title: str, chapters: List[Chapter]):
+    return template_ncx.render({"title": title, "chapters": chapters})
 
 
 def text(title: str, paragraphs: List[str]):

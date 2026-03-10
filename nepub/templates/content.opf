@@ -9,6 +9,7 @@
     </metadata>
     <manifest>
         <item media-type="application/xhtml+xml" id="nav" href="navigation.xhtml" properties="nav" />
+        <item media-type="application/x-dtbncx+xml" id="ncx" href="toc.ncx" />
         <item media-type="text/css" id="style" href="style.css" />
         <item media-type="application/json" id="metadata" href="metadata.json" />
 {%- for episode in episodes %}
@@ -18,7 +19,7 @@
         <item media-type="{{ image.type }}" id="{{ image.id }}" href="image/{{ image.name }}" />
 {%- endfor %}
     </manifest>
-    <spine page-progression-direction="rtl">
+    <spine page-progression-direction="rtl" toc="ncx">
 {%- for episode in episodes %}
         <itemref linear="yes" idref="{{ episode.id }}" />
 {%- endfor %}
